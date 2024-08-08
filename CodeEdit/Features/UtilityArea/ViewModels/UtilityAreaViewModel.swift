@@ -12,6 +12,8 @@ import SwiftUI
 /// A model class to host and manage data for the Utility area.
 class UtilityAreaViewModel: ObservableObject {
 
+    @Published var selectedTab: UtilityAreaTab? = .terminal
+
     @Published var terminals: [UtilityAreaTerminal] = []
 
     @Published var selectedTerminals: Set<UtilityAreaTerminal.ID> = []
@@ -54,6 +56,23 @@ class UtilityAreaViewModel: ObservableObject {
     func togglePanel() {
         withAnimation {
             self.isCollapsed.toggle()
+        }
+    }
+
+    /// Update a terminal's title.
+    /// - Parameters:
+    ///   - id: The id of the terminal to update.
+    ///   - title: The title to set. If left `nil`, will set the terminal's
+    ///            ``UtilityAreaTerminal/customTitle`` to `false`.
+    func updateTerminal(_ id: UUID, title: String?) {
+        guard let terminal = terminals.first(where: { $0.id == id }) else { return }
+        if let newTitle = title {
+            if !terminal.customTitle {
+                terminal.title = newTitle
+            }
+            terminal.terminalTitle = newTitle
+        } else {
+            terminal.customTitle = false
         }
     }
 }
